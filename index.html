@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+</head>
+<body>
+    <section class="max-w-5xl m-5 mt-28 text-xl">
+        <h1 class="font-semibold text-5xl">Todo List</h1>
+        <div class="flex gap-10 mt-10 h-10 item-center">
+            <input id="todoItemInput" type="text" placeholder="Enter Your Task" class="border-2 border-gray-800 p-4 rounded-xl w-1/2">
+            <button id="addTodo" class="bg-green-700 text-white  px-3 rounded-xl">Save</button>
+        </div>
+        <span id="validation" class="text-red-900 text-sm"></span>
+        <ol class="mt-5" id="todoItems">
+        </ol>
+    </section>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script src="./index.js"></script>
+</body>
+</html>
