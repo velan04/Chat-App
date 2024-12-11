@@ -10,7 +10,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: 'http://localhost:5173',
+        origin: 'https://chat-room-gold.vercel.app/',
         methods: ['GET', 'POST']
     }
 });
