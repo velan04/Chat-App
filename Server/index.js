@@ -1,54 +1,82 @@
 const express = require('express');
 const http = require('http');
-const { Server } = require('socket.io');
-const {v4 : uuid} = require('uuid');
-const cors = require('cors');
+const socketIo = require('socket.io');
+const {addUsers} = require('./data');
+const {removeUser} = require('./data');
+const {getUser} = require('./data');
 
-
+//instance
 const app = express();
-app.use(cors());
 const server = http.createServer(app);
-
-const socketIo = new Server(server, {
-     cors: {
-        origin: 'http://127.0.0.1:5500',
-        methods: ['GET', 'POST'],
-        Credential: true
+const io = socketIo(server, {
+    cors: {
+        origin: 'http://localhost:5173',
+        methods: ['GET', 'POST']
     }
-})
+});
+const port = 8000;
 
-let todoList = [];
+//http method
+app.get('/', (req, res) => {
+    res.json('world')
+});
 
-const nameSpace = socketIo.of('/todo');
-nameSpace.on("connection", (socket) => {
-    console.log('New Connection connected');
-    socket.emit('Update', todoList);
-    //Add socket
-    socket.on('newItem', (item) => {
-        const todoItem = {id: uuid(), value: item}
-        todoList.push(todoItem);
-        nameSpace.emit('Update', todoList);
-    });
-    //Update Socket
-    socket.on('updateItem', (itemOb) => {
-        const index = todoList.findIndex((item) => item.id === itemOb.id);
-        if(index !== -1){
-            todoList[index].value = itemOb.value;
-            nameSpace.emit('Update', todoList);
+//Socket 
+io.on('connection', (socket) => {
+    console.log('A user connected');
+
+    socket.on('addItem', ({name, room}, callBack) => {
+        console.log(name, room);
+        const {user, error} = addUsers({id: socket.id, name, room});
+
+        console.log(user)
+
+        if(error) {
+            callBack(error)
+            return
         }
-    });
 
-    //delete socket
-    socket.on('deleteItem', (id) => {
-        todoList = todoList.filter((item) => item.id !== id);
-        nameSpace.emit('Update', todoList);
-    });
+        socket.join(user.room);
+
+        socket.emit('message', {
+            user: 'admin',
+            text: `${user.name}, welcome to the ${user.room}`
+        });
+
+        socket.broadcast.to(user.room).emit('message', {
+            user: 'admin',
+            text: `${user.name}, has joined!`
+        });
+    })
+
+     socket.on('sendMsg', (message,  callBack) => {
+        const user = getUser(socket.id);
+        if(user) {
+            io.to(user.room).emit('message', {
+            user: user.name,
+            text: message })  
+        }
+            callBack()
+
+        
+
+     })
+
 
     socket.on('disconnect', () => {
-        console.log('Connection disconnected');
-    });
+        console.log('User disconnect')
+        const user = removeUser(socket.id);
+        if(user){
+            io.to(user.room).emit('message', {
+                user: 'admin',
+                text: `${user.name} has left`
+            })
+        }
+    })
+
 })
 
-server.listen(3000, () => {
-    console.log('Server is running on port 3000');
-});
+//Run server
+server.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+})
