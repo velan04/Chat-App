@@ -10,7 +10,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: ['https://chat-app-black-mu-83.vercel.app'],
+        origin: '*',
         methods: ['GET', 'POST'],
         allowedHeaders: ["Content-Type"],
         credentials: true,
