@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 let socket;
 
 const Chat = () => {
-  const backendUrl = 'http://localhost:8000';
+  const backendUrl = 'https://chat-app-server-nine-blond.vercel.app';
   const [user, setUser] = useState('');
   const [room, setRoom] = useState('');
   const [text, setText] = useState('');
