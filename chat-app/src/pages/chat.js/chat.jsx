@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
-
-let socket;
 
 const Chat = () => {
   const backendUrl = 'https://chat-app-server-nine-blond.vercel.app';
   const [user, setUser] = useState('');
   const [room, setRoom] = useState('');
   const [text, setText] = useState('');
-  const [message, setMessage] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const socketRef = useRef(null); // Use a ref for the socket instance
 
   useEffect(() => {
     const url = window.location.search;
@@ -19,30 +18,41 @@ const Chat = () => {
     setUser(name);
     setRoom(roomName);
 
-    socket = io(backendUrl);
-    socket.emit('addItem', { name, room: roomName }, (error) => {
+    // Initialize the socket connection
+    socketRef.current = io(backendUrl, {
+      transports: ['websocket', 'polling'], // Ensure WebSocket is used primarily
+    });
+
+    // Emit join event
+    socketRef.current.emit('addItem', { name, room: roomName }, (error) => {
       if (error) {
         alert(error);
       }
     });
 
+    // Cleanup on component unmount
     return () => {
-      socket.disconnect();
-      socket.off();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current.off(); // Remove all event listeners
+      }
     };
-  }, []);
+  }, [backendUrl]);
 
   useEffect(() => {
-    socket.on('message', (message) => {
-      setMessage((prevMsg) => [...prevMsg, message]);
-    });
+    if (socketRef.current) {
+      // Listen for messages
+      socketRef.current.on('message', (message) => {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      });
+    }
   }, []);
 
   const sendMessage = (e) => {
     e.preventDefault();
-    if (text.trim()) {
-      socket.emit('sendMsg', text, () => {
-        setText('');
+    if (text.trim() && socketRef.current) {
+      socketRef.current.emit('sendMsg', text, () => {
+        setText(''); // Clear input after message is sent
       });
     }
   };
@@ -54,7 +64,7 @@ const Chat = () => {
         <p className="text-sm">Logged in as: {user}</p>
       </div>
       <div className="flex-1 overflow-y-auto p-4 bg-gray-100">
-        {message.map((msg, index) => (
+        {messages.map((msg, index) => (
           <div key={index} className="mb-2 p-2 bg-white rounded shadow">
             <strong className="text-blue-500">{msg.user}</strong>: {msg.text}
           </div>
