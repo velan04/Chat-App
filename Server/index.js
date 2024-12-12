@@ -12,8 +12,10 @@ const io = socketIo(server, {
     cors: {
         origin: 'https://chat-app-black-mu-83.vercel.app',
         methods: ['GET', 'POST'],
+        allowedHeaders: ["Content-Type"],
         credentials: true,
-    }
+    },
+    transports: ["websocket", "polling"], 
 });
 const port = 8000;
 

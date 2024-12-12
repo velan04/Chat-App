@@ -20,7 +20,7 @@ const Chat = () => {
 
     // Initialize the socket connection
     socketRef.current = io(backendUrl, {
-      transports: ['websocket', 'polling'], // Ensure WebSocket is used primarily
+      transports: ["polling"], // Use polling as a fallback for WebSocket
     });
 
     // Emit join event
