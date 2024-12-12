@@ -49,7 +49,7 @@ const Chat = () => {
 
   return (
     <div className="flex flex-col h-screen max-w-xl mx-auto border border-gray-300 rounded-lg shadow-md">
-      <div className="fixed top-0  bg-blue-500 text-white p-4 rounded-t-lg text-center">
+      <div className="sticky top-0  bg-blue-500 text-white p-4 rounded-t-lg text-center">
         <h2 className="text-lg font-bold">Room: {room}</h2>
         <p className="text-sm">Logged in as: {user}</p>
       </div>
@@ -60,7 +60,7 @@ const Chat = () => {
           </div>
         ))}
       </div>
-      <form className="flex fixed bottom-0 left-0 right-0 items-center p-4 bg-white border-t border-gray-300" onSubmit={sendMessage}>
+      <form className="flex sticky bottom-0 items-center p-4 bg-white border-t border-gray-300" onSubmit={sendMessage}>
         <input
           type="text"
           value={text}
