@@ -60,7 +60,7 @@ const Chat = () => {
           </div>
         ))}
       </div>
-      <form className="flex sticky bottom-0 items-center p-4 bg-white border-t border-gray-300" onSubmit={sendMessage}>
+      <form className="w-[400px] flex fixed bottom-0 items-center p-4 bg-white border-t border-gray-300" onSubmit={sendMessage}>
         <input
           type="text"
           value={text}
