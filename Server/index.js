@@ -59,11 +59,7 @@ io.on('connection', (socket) => {
             text: message })  
         }
             callBack()
-
-        
-
      })
-
 
     socket.on('disconnect', () => {
         console.log('User disconnect')

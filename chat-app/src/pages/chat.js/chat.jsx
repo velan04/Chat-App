@@ -60,8 +60,10 @@ const Chat = () => {
           </div>
         ))}
       </div>
-      <form className="flex fixed bottom-0 left-0 right-0 items-center
-      p-4 bg-white border-t border-gray-300 max-w-xl mx-auto" onSubmit={sendMessage}>
+      <form
+        className="flex fixed bottom-4 left-0 right-0 items-center p-4 bg-white border-t border-gray-300 max-w-xl mx-auto z-50"
+        onSubmit={sendMessage}
+      >
         <input
           type="text"
           value={text}
@@ -76,6 +78,7 @@ const Chat = () => {
           Send
         </button>
       </form>
+
     </div>
   );
 };
